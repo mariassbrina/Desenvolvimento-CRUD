@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class ClienteADO {
-    
+
     // Linhas 13 a 104 comentadas por: Sherlyene Vitória Mauriz de Oliveira.
-    
+
     public static void createCliente() {
         Scanner scanner = new Scanner(System.in);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -28,12 +28,12 @@ public class ClienteADO {
                 System.out.println("Nome inválido.");
             }
         }
-        
+
         // Loop para garantir que o email seja válido.
         while (true){
             System.out.print("Insira o e-mail do Cliente: ");
             email = scanner.nextLine();
-          
+
             // Verifica se o email está vazio ou contém apenas espaços em branco
             if(!email.isBlank() && email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2})?$")){
                 break; // Sai do loop se o email for válido
@@ -41,13 +41,13 @@ public class ClienteADO {
                 System.out.println("Email inválido.");
             }
         }
-        
+
 
         // Loop para garantir que o telefone não esteja vazio ou em branco
         while (true){
             System.out.print("Insira o telefone do Cliente: ");
             telefone = scanner.nextLine();
-            
+
             // Verifica se o email está vazio ou contém apenas espaços em branco
             if(!telefone.isBlank() && telefone.matches("^\\(\\d{2}\\)\\d{9}$") || telefone.matches("^\\d{11}$")){
                 break; // Sai do loop se o telefone for válido
@@ -60,7 +60,7 @@ public class ClienteADO {
         while (true){
             System.out.print("Insira o CPF do Cliente: ");
             cpf = scanner.nextLine();
-            
+
             // Verifica se o email é válido
             if(!cpf.isBlank() && cpf.matches("^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$") || cpf.matches("^\\d{11}$")){
                 break; // Sai do loop se o cpf for válido
@@ -81,16 +81,16 @@ public class ClienteADO {
                 System.out.println("Data inválida. Por favor, insira no formato dd/MM/yyyy.");
             }
         }
-        
-        
+
+
         // Código em SQL para ser executado
         String sql = "INSERT INTO clientes (nome, email, telefone, cpf, data_cadastro) VALUES (?, ?, ?, ?, ?)";
-        
+
         // Tenta conectar com o banco de dados
         try (Connection conexao = ConexaoBanco.obterConexao();
-            
-            // Prepara a instrunção SQL para ser executada
-            PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+             // Prepara a instrunção SQL para ser executada
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, telefone);
@@ -99,30 +99,41 @@ public class ClienteADO {
             stmt.executeUpdate();
             System.out.println("Cliente inserido com sucesso.");
         } catch (SQLException ex) {
-            
+
             // Exibe mensagem de erro caso não consiga inserir cliente
             System.out.println("Erro ao inserir cliente: " + ex.getMessage());
         }
     }
 
+    // Funcionalidade READ comentada por : Joelma Giovanna Barbosa Ferreira Rocha
+
+    // Este metodo xibe todos os clientes do banco de dados.
+    // Ele precisa executar uma consulta SQL (SELECT * FROM clientes;)
+    // e mostra cada cliente com seus atributos (ID, nome, email, telefone, CPF, e data de cadastro). Se não houver nenhum cliente no banco, ele exibe uma mensagem informando isso.
 
     public static void readClientes() {
+        // Declara a instrução SQL que será executada para selecionar todos os registros da tabela 'clientes'
         String sql = "SELECT * FROM clientes;";
-
+        // Neste bloco ele irá obter uma conexão com o banco de dados e preparar
+        // a instrução SQL para ser executada no banco.
+        // Em seguida executa a consulta e armazena o resultado em um ResultSet
         try (Connection conexao = ConexaoBanco.obterConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
+            // Verifica se o ResultSet está vazio (sem clientes encontrados)
             if (!rs.isBeforeFirst()) {
                 System.out.println("Nenhum cliente encontrado.");
             }
+            // Essa parte do código esta percorrendo o resultado da consulta SQL para acessar cada cliente encontrado.
             while (rs.next()) {
+                //pega os dados do cliente a partir do ResultSet
                 int idCliente = rs.getInt("idCliente");
                 String nome = rs.getString("nome");
                 String email = rs.getString("email");
                 String telefone = rs.getString("telefone");
                 String cpf = rs.getString("cpf");
                 java.sql.Date dataCadastro = rs.getDate("data_cadastro");
-
+            // Exibe os dados do cliente no console
                 System.out.println("");
                 System.out.println("Id: " + idCliente);
                 System.out.println("Dados do cliente " + nome + ":");
@@ -132,24 +143,30 @@ public class ClienteADO {
                 System.out.println("Data de cadastro: " + dataCadastro);
             }
         } catch (SQLException ex) {
+            // Para possíveis erros de SQL e exibe uma mensagem de erro no console
             System.out.println("Erro na consulta SQL. ERRO: " + ex.getMessage());
         }
     }
 
-
+        //Neste metodo, usaremos o readClienteID para realizar buscas de cliente especificamente por seus IDs.
     public static void readClienteID() {
+        // Inicializa um scanner para ler a entrada do usuário
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Digite o ID do cliente que deseja pesquisar: ");
         int idCliente = scanner.nextInt();
 
+        // Declara a instrução SQL para selecionar um cliente específico com base no ID fornecido
         String sql = "SELECT * FROM clientes WHERE idCliente = ?;";
 
+        // Mais uma vez utilizaremos a conexao com o banco de dados e armazenaremos no ResultSet.
         try (Connection conexao = ConexaoBanco.obterConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            // Define o valor do parâmetro (ID do cliente) na instrução SQL
             stmt.setInt(1, idCliente);
             ResultSet rs = stmt.executeQuery();
-
+            // faz uma verificação se algum cliente foi encontrado e em seguida pega os dados do cliente a partir do ResultSet
             if (!rs.isBeforeFirst()) {
                 System.out.println("Nenhum cliente encontrado com o ID: " + idCliente);
             } else {
@@ -159,7 +176,7 @@ public class ClienteADO {
                     String telefone = rs.getString("telefone");
                     String cpf = rs.getString("cpf");
                     java.sql.Date dataCadastro = rs.getDate("data_cadastro");
-
+                    // Exibe os dados do cliente encontrado
                     System.out.println("");
                     System.out.println("Id: " + idCliente);
                     System.out.println("Dados do cliente " + nome + ":");
@@ -170,6 +187,7 @@ public class ClienteADO {
                 }
             }
         } catch (SQLException ex) {
+            // Para possíveis erros de SQL e exibe uma mensagem de erro no console
             System.out.println("Erro na consulta SQL. ERRO: " + ex.getMessage());
         }
     }
