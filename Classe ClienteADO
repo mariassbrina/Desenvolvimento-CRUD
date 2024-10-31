@@ -10,25 +10,12 @@ import java.util.regex.Matcher;
 
 public class ClienteADO {
 
-
-
     // Linhas 13 a 104 comentadas por: Sherlyene Vitória Mauriz de Oliveira.
 
     public static void createCliente() {
         Scanner scanner = new Scanner(System.in);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        System.out.println("Insira o nome do Cliente: ");
-        String nome = scanner.nextLine();
-
-        System.out.print("Insira o e-mail do Cliente: ");
-        String email = scanner.nextLine();
-
-        System.out.print("Insira o telefone do Cliente: ");
-        String telefone = scanner.nextLine();
-
-        System.out.print("Insira o CPF do Cliente: ");
-        String cpf = scanner.nextLine();
         String nome, email, telefone, cpf;
         // Loop para garantir que o nome não esteja vazio ou em branco
         while (true) {
@@ -69,9 +56,6 @@ public class ClienteADO {
             }
         }
 
-        System.out.print("Insira a data de cadastro (dd/MM/yyyy): ");
-        String data_cadastroStr = scanner.nextLine();
-        LocalDate data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
         // Loop para garantir que o cpf seja válido
         while (true){
             System.out.print("Insira o CPF do Cliente: ");
@@ -104,14 +88,14 @@ public class ClienteADO {
 
         // Tenta conectar com o banco de dados
         try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            // Prepara a instrunção SQL para ser executada
-            PreparedStatement stmt = conexao.prepareStatement(sql)) {
+             // Prepara a instrunção SQL para ser executada
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, telefone);
-@@ -37,6 +99,8 @@ public class ClienteADO {
+            stmt.setString(4, cpf);
+            stmt.setDate(5, Date.valueOf(data_cadastro));
             stmt.executeUpdate();
             System.out.println("Cliente inserido com sucesso.");
         } catch (SQLException ex) {
@@ -121,32 +105,35 @@ public class ClienteADO {
         }
     }
 
+    // Funcionalidade READ comentada por : Joelma Giovanna Barbosa Ferreira Rocha
+
+    // Este metodo xibe todos os clientes do banco de dados.
+    // Ele precisa executar uma consulta SQL (SELECT * FROM clientes;)
+    // e mostra cada cliente com seus atributos (ID, nome, email, telefone, CPF, e data de cadastro). Se não houver nenhum cliente no banco, ele exibe uma mensagem informando isso.
 
     public static void readClientes() {
-        // Define a consulta SQL  e seleciona todos os registros da tabela clientes
+        // Declara a instrução SQL que será executada para selecionar todos os registros da tabela 'clientes'
         String sql = "SELECT * FROM clientes;";
-
-        //Conexão com o banco 
+        // Neste bloco ele irá obter uma conexão com o banco de dados e preparar
+        // a instrução SQL para ser executada no banco.
+        // Em seguida executa a consulta e armazena o resultado em um ResultSet
         try (Connection conexao = ConexaoBanco.obterConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
-
-            //Verifica se há algum registro encontrado
+            // Verifica se o ResultSet está vazio (sem clientes encontrados)
             if (!rs.isBeforeFirst()) {
-                //Caso nao, imprime a seguinte mensagem.
                 System.out.println("Nenhum cliente encontrado.");
             }
-            //Iteração
+            // Essa parte do código esta percorrendo o resultado da consulta SQL para acessar cada cliente encontrado.
             while (rs.next()) {
-                //Obtem os dados dos clientes a partir do ResultSet usando os nomes das colunas
+                //pega os dados do cliente a partir do ResultSet
                 int idCliente = rs.getInt("idCliente");
                 String nome = rs.getString("nome");
                 String email = rs.getString("email");
                 String telefone = rs.getString("telefone");
                 String cpf = rs.getString("cpf");
                 java.sql.Date dataCadastro = rs.getDate("data_cadastro");
-
-                // Imprime os dados do cliente no console
+            // Exibe os dados do cliente no console
                 System.out.println("");
                 System.out.println("Id: " + idCliente);
                 System.out.println("Dados do cliente " + nome + ":");
@@ -156,35 +143,40 @@ public class ClienteADO {
                 System.out.println("Data de cadastro: " + dataCadastro);
             }
         } catch (SQLException ex) {
-            //Caso haja erro na consulta SQL, captura a exceção e imprime a mensagem de erro
+            // Para possíveis erros de SQL e exibe uma mensagem de erro no console
             System.out.println("Erro na consulta SQL. ERRO: " + ex.getMessage());
         }
     }
+
+        //Neste metodo, usaremos o readClienteID para realizar buscas de cliente especificamente por seus IDs.
     public static void readClienteID() {
-        //scanner para ler a entrada do usuario
+        // Inicializa um scanner para ler a entrada do usuário
         Scanner scanner = new Scanner(System.in);
-        //Usuario digita o ID do cliente
+
         System.out.print("Digite o ID do cliente que deseja pesquisar: ");
         int idCliente = scanner.nextInt();
+
+        // Declara a instrução SQL para selecionar um cliente específico com base no ID fornecido
         String sql = "SELECT * FROM clientes WHERE idCliente = ?;";
-        // obtem a conexao com o banco usando a classe ConexaoBanco
+
+        // Mais uma vez utilizaremos a conexao com o banco de dados e armazenaremos no ResultSet.
         try (Connection conexao = ConexaoBanco.obterConexao();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
-                //id do cliente como parametro de consulta
+
+            // Define o valor do parâmetro (ID do cliente) na instrução SQL
             stmt.setInt(1, idCliente);
             ResultSet rs = stmt.executeQuery();
-            // verifica se nao ha nenhum registro encontrado, caso nao, imprime a mensagem informando que nenhum cliente foi registrado.
+            // faz uma verificação se algum cliente foi encontrado e em seguida pega os dados do cliente a partir do ResultSet
             if (!rs.isBeforeFirst()) {
                 System.out.println("Nenhum cliente encontrado com o ID: " + idCliente);
             } else {
                 while (rs.next()) {
-                    //iteracao sobre os registros existentes
                     String nome = rs.getString("nome");
                     String email = rs.getString("email");
                     String telefone = rs.getString("telefone");
                     String cpf = rs.getString("cpf");
                     java.sql.Date dataCadastro = rs.getDate("data_cadastro");
-                    // imprime os dados do cliente.
+                    // Exibe os dados do cliente encontrado
                     System.out.println("");
                     System.out.println("Id: " + idCliente);
                     System.out.println("Dados do cliente " + nome + ":");
@@ -195,12 +187,124 @@ public class ClienteADO {
                 }
             }
         } catch (SQLException ex) {
-            // em caso de erro na consulta, captura a execucao e imprime a mensagem de erro
+            // Para possíveis erros de SQL e exibe uma mensagem de erro no console
             System.out.println("Erro na consulta SQL. ERRO: " + ex.getMessage());
         }
     }
 
-    //linhas 204 a 394 comentadas por Ana Eduarda Raposo Medeiros
+
+    public static void updateCliente() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o ID do cliente: ");
+        int idCliente = scanner.nextInt();
+        scanner.nextLine();
+
+        if (verifyClientes(idCliente)) {
+            String selectSql = "SELECT nome, email, telefone, cpf, data_cadastro FROM clientes WHERE idCliente = ?";
+            try (Connection conexao = ConexaoBanco.obterConexao();
+                 PreparedStatement selectStmt = conexao.prepareStatement(selectSql)) {
+
+                selectStmt.setInt(1, idCliente);
+                ResultSet rs = selectStmt.executeQuery();
+
+                if (rs.next()) {
+                    System.out.println("Dados atuais do cliente:");
+                    System.out.println("Nome: " + rs.getString("nome"));
+                    System.out.println("Email: " + rs.getString("email"));
+                    System.out.println("Telefone: " + rs.getString("telefone"));
+                    System.out.println("CPF: " + rs.getString("cpf"));
+                    System.out.println("Data de Cadastro: " + rs.getDate("data_cadastro"));
+                } else {
+                    System.out.println("Cliente não encontrado.");
+                    return;
+                }
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+                System.out.println("Digite as atualizações do cliente: ");
+
+                System.out.print("Insira o novo email do cliente: ");
+                String email = scanner.nextLine();
+
+                System.out.print("Insira o novo número de telefone do cliente: ");
+                String telefone = scanner.nextLine();
+
+                System.out.print("Insira a nova data de cadastro (dd/MM/yyyy): ");
+                String data_cadastroStr = scanner.nextLine();
+                LocalDate data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
+
+                System.out.print("Insira o novo CPF do cliente: ");
+                String cpf = scanner.nextLine();
+
+                String updateSql = "UPDATE clientes SET email = ?, telefone = ?, cpf = ?, data_cadastro = ? WHERE idCliente = ?";
+                try (PreparedStatement updateStmt = conexao.prepareStatement(updateSql)) {
+                    updateStmt.setString(1, email);
+                    updateStmt.setString(2, telefone);
+                    updateStmt.setString(3, cpf);
+                    updateStmt.setDate(4, Date.valueOf(data_cadastro));
+                    updateStmt.setInt(5, idCliente);
+
+                    int linhasAfetadas = updateStmt.executeUpdate();
+                    if (linhasAfetadas > 0) {
+                        System.out.println(linhasAfetadas + " cliente atualizado com sucesso.");
+                    } else {
+                        System.out.println("Nenhum cliente foi atualizado.");
+                    }
+                }
+            } catch (SQLException ex) {
+                System.out.println("Erro ao acessar o banco de dados: " + ex.getMessage());
+            }
+        } else {
+            System.out.println("Cliente não encontrado. Atualização não realizada.");
+        }
+    }
+
+
+    public static void deleteCliente() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite o ID do cliente a ser deletado: ");
+        int idCliente = scanner.nextInt();
+
+        if (verifyClientes(idCliente)) {
+            String sql = "DELETE FROM clientes WHERE idCliente = ?;";
+
+            try (Connection conexao = ConexaoBanco.obterConexao();
+                 PreparedStatement stmt = conexao.prepareStatement(sql)) {
+                stmt.setInt(1, idCliente);
+                int linhasAfetadas = stmt.executeUpdate();
+
+                if (linhasAfetadas > 0) {
+                    System.out.println("Cliente deletado com sucesso.");
+                } else {
+                    System.out.println("Nenhum cliente foi deletado.");
+                }
+            } catch (SQLException ex) {
+                System.out.println("Erro ao deletar cliente: " + ex.getMessage());
+            }
+        } else {
+            System.out.println("Cliente não encontrado.");
+        }
+    }
+
+
+    public static boolean verifyClientes(int idCliente) {
+        String sql = "SELECT COUNT(*) FROM clientes WHERE idCliente = ?";
+        try (Connection conexao = ConexaoBanco.obterConexao();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, idCliente);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao verificar cliente: " + ex.getMessage());
+        }
+        return false;
+    }
+}
+
+    //linhas 204 a 495 comentadas por Ana Eduarda Raposo Medeiros
     public static void updateCliente() {
         //scanner para ler a entrada do usuario 
         Scanner scanner = new Scanner(System.in);
