@@ -1,6 +1,13 @@
+//comentado por Maria Sabrina 
+
+//importação para manipulação de datas
 import java.util.Date;
+
+
+// criando a classe cliente para cada cliente inserir seu dados
 public class Cliente {
 
+//atributos da class cliente
         private int idCliente;
         private String nome;
         private String email;
@@ -8,6 +15,7 @@ public class Cliente {
         private String cpf;
         private Date data_cadastro;
 
+// construtor que inicializa os atributos
         public Cliente(int idCliente, String nome, String email, String telefone, String cpf, Date data_cadastro){
             this.idCliente = idCliente;
             this.nome = nome;
@@ -17,55 +25,58 @@ public class Cliente {
             this.data_cadastro = data_cadastro;
 
         }
+//metodo get para acessar o atributo IdCliente
     public int getIdCliente() {
         return idCliente;
     }
-
+//metodos set para modificar o atributo IdCliente
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }
-
+//metodo get para acessar o atributo nome
     public String getNome() {
         return nome;
     }
-
+//metodos set para modificar o atributo nome
     public void setNome(String nome) {
         this.nome = nome;
     }
-
+//metodo get para acessar o atributo email
     public String getEmail() {
         return email;
     }
-
+//metodos set para modificar o atributo email
     public void setEmail(String email) {
         this.email = email;
     }
-
+//metodo get para acessar o atributo telefone 
     public String getTelefone() {
         return telefone;
     }
-
+//metodos set para modificar o atributo telefone
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-
+//metodo get para acessar o atributo cpf
     public String getCpf() {
         return cpf;
     }
-
+//metodos set para modificar o atributo cpf
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-
+//metodo get para acessar o atributo data_cadastro
     public Date getDataCadastro() {
         return data_cadastro;
     }
-
+//metodos set para modificar o atributo data_cadastro
     public void setDataCadastro(Date dataCadastro) {
         this.data_cadastro = dataCadastro;
     }
-
+//sobrescreve toString() para mostrar os dados do cliente de forma personalizada
     @Override
+
+// Método que retorna em texto o objeto Cliente
     public String toString() {
         return "Cliente{" +
                 "idCliente=" + idCliente +
