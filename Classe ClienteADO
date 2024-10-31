@@ -133,7 +133,7 @@ public class ClienteADO {
                 String telefone = rs.getString("telefone");
                 String cpf = rs.getString("cpf");
                 java.sql.Date dataCadastro = rs.getDate("data_cadastro");
-            // Exibe os dados do cliente no console
+                // Exibe os dados do cliente no console
                 System.out.println("");
                 System.out.println("Id: " + idCliente);
                 System.out.println("Dados do cliente " + nome + ":");
@@ -148,7 +148,7 @@ public class ClienteADO {
         }
     }
 
-        //Neste metodo, usaremos o readClienteID para realizar buscas de cliente especificamente por seus IDs.
+    //Neste metodo, usaremos o readClienteID para realizar buscas de cliente especificamente por seus IDs.
     public static void readClienteID() {
         // Inicializa um scanner para ler a entrada do usuário
         Scanner scanner = new Scanner(System.in);
@@ -304,60 +304,60 @@ public class ClienteADO {
     }
 }
 
-    //linhas 204 a 495 comentadas por Ana Eduarda Raposo Medeiros
-    public static void updateCliente() {
-        //scanner para ler a entrada do usuario 
-        Scanner scanner = new Scanner(System.in);
+//linhas 204 a 495 comentadas por Ana Eduarda Raposo Medeiros
+public static void updateCliente() {
+    //scanner para ler a entrada do usuario 
+    Scanner scanner = new Scanner(System.in);
 
-        //solicita e lê o ID  do cliente
-        System.out.print("Digite o ID do cliente: ");
-        int idCliente = scanner.nextInt();
-        scanner.nextLine();
+    //solicita e lê o ID  do cliente
+    System.out.print("Digite o ID do cliente: ");
+    int idCliente = scanner.nextInt();
+    scanner.nextLine();
 
-        // verifica se o cliente e real
-        if (verifyClientes(idCliente)) {
+    // verifica se o cliente e real
+    if (verifyClientes(idCliente)) {
 
-            // Aqui, define que a consulta SQL sera com base no ID
-            String selectSql = "SELECT nome, email, telefone, cpf, data_cadastro FROM clientes WHERE idCliente = ?";
+        // Aqui, define que a consulta SQL sera com base no ID
+        String selectSql = "SELECT nome, email, telefone, cpf, data_cadastro FROM clientes WHERE idCliente = ?";
 
-            //estabelece, obtem a conexao com o banco de dados e prepara a instrucao SQL 
-            try (Connection conexao = ConexaoBanco.obterConexao();
-                 PreparedStatement selectStmt = conexao.prepareStatement(selectSql)) {
+        //estabelece, obtem a conexao com o banco de dados e prepara a instrucao SQL 
+        try (Connection conexao = ConexaoBanco.obterConexao();
+             PreparedStatement selectStmt = conexao.prepareStatement(selectSql)) {
 
-                    //define o ID do cliente como parametro de consulta
-                selectStmt.setInt(1, idCliente);
-                ResultSet rs = selectStmt.executeQuery();// executa a consulta e obtem resultados 
+            //define o ID do cliente como parametro de consulta
+            selectStmt.setInt(1, idCliente);
+            ResultSet rs = selectStmt.executeQuery();// executa a consulta e obtem resultados 
 
-                //verifica se o cliente foi encontrado
-                if (rs.next()) {
-                    //exibe os dados atuais dos clientes
-                    System.out.println("Dados atuais do cliente:");
-                    System.out.println("Nome: " + rs.getString("nome"));
-                    System.out.println("Email: " + rs.getString("email"));
-                    System.out.println("Telefone: " + rs.getString("telefone"));
-                    System.out.println("CPF: " + rs.getString("cpf"));
-                    System.out.println("Data de Cadastro: " + rs.getDate("data_cadastro"));
-                } else {
-                    
-                    // se nao houver registros, imprime uma mensagem informando que o cliente nao foi encontrado
-                    System.out.println("Cliente não encontrado.");
-                    return;
-                }
-                
-                // definicao do formato de leitura da data 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            //verifica se o cliente foi encontrado
+            if (rs.next()) {
+                //exibe os dados atuais dos clientes
+                System.out.println("Dados atuais do cliente:");
+                System.out.println("Nome: " + rs.getString("nome"));
+                System.out.println("Email: " + rs.getString("email"));
+                System.out.println("Telefone: " + rs.getString("telefone"));
+                System.out.println("CPF: " + rs.getString("cpf"));
+                System.out.println("Data de Cadastro: " + rs.getDate("data_cadastro"));
+            } else {
 
-                
-                //solicita as informacoes atualizadas dos clientes
-                System.out.println("Digite as atualizações do cliente: ");
-                System.out.print("Insira o novo email do cliente: ");
-                String email = scanner.nextLine();
-                System.out.print("Insira o novo número de telefone do cliente: ");
-                String telefone = scanner.nextLine();
-                System.out.print("Insira a nova data de cadastro (dd/MM/yyyy): ");
-                String data_cadastroStr = scanner.nextLine();
+                // se nao houver registros, imprime uma mensagem informando que o cliente nao foi encontrado
+                System.out.println("Cliente não encontrado.");
+                return;
+            }
 
-                // Validando a data de cadastro
+            // definicao do formato de leitura da data 
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+            //solicita as informacoes atualizadas dos clientes
+            System.out.println("Digite as atualizações do cliente: ");
+            System.out.print("Insira o novo email do cliente: ");
+            String email = scanner.nextLine();
+            System.out.print("Insira o novo número de telefone do cliente: ");
+            String telefone = scanner.nextLine();
+            System.out.print("Insira a nova data de cadastro (dd/MM/yyyy): ");
+            String data_cadastroStr = scanner.nextLine();
+
+            // Validando a data de cadastro
             LocalDate data_cadastro;
             try {
                 data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
@@ -392,104 +392,103 @@ public class ClienteADO {
             }
 
 
-                //converte a string da data para um objeto LocalDate usando o formulario definido
-                LocalDate data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
-                System.out.print("Insira o novo CPF do cliente: ");
-                String cpf = scanner.nextLine();
+            //converte a string da data para um objeto LocalDate usando o formulario definido
+            LocalDate data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
+            System.out.print("Insira o novo CPF do cliente: ");
+            String cpf = scanner.nextLine();
 
-                //define a consulta SQL para a atualizacao
-                String updateSql = "UPDATE clientes SET email = ?, telefone = ?, cpf = ?, data_cadastro = ? WHERE idCliente = ?";
-                try (PreparedStatement updateStmt = conexao.prepareStatement
-                //define os valores dos parametros na consulta de atualizacao 
-                (updateSql)) {
-                    updateStmt.setString(1, email);
-                    updateStmt.setString(2, telefone);
-                    updateStmt.setString(3, cpf);
-                    updateStmt.setDate(4, Date.valueOf(data_cadastro));
-                    updateStmt.setInt(5, idCliente);
+            //define a consulta SQL para a atualizacao
+            String updateSql = "UPDATE clientes SET email = ?, telefone = ?, cpf = ?, data_cadastro = ? WHERE idCliente = ?";
+            try (PreparedStatement updateStmt = conexao.prepareStatement
+                    //define os valores dos parametros na consulta de atualizacao 
+                            (updateSql)) {
+                updateStmt.setString(1, email);
+                updateStmt.setString(2, telefone);
+                updateStmt.setString(3, cpf);
+                updateStmt.setDate(4, Date.valueOf(data_cadastro));
+                updateStmt.setInt(5, idCliente);
 
-                    //executa a atualizacao e obtem o numero de linhas afetadas
-                    int linhasAfetadas = updateStmt.executeUpdate();
-                    //verifica se a atualizacao foi bem sucedida
-                    if (linhasAfetadas > 0) {
-                        System.out.println(linhasAfetadas + " cliente atualizado com sucesso.");
-                    } else {
-                        System.out.println("Nenhum cliente foi atualizado.");
-                    }
-                }
-            } catch (SQLException ex) {
-                // em caso de erro, captura a execao e imprime a mensagem de erro
-                System.out.println("Erro ao acessar o banco de dados: " + ex.getMessage());
-            }
-            } else {
-            //se o cliente nao for encontrado, imprime uma mensagem de erro, informando que a atualizacao nao foi bem sucedida.
-            System.out.println("Cliente não encontrado. Atualização não realizada.");
-            }
-            }
-         // Método para validar o email
-            private static boolean isValidEmail(String email) {
-            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(emailRegex);
-             }
-
-        // Método para validar o telefone
-            private static boolean isValidPhone(String telefone) {
-             String phoneRegex = "^\\+?[0-9]{10,15}$"; // Exemplo simples para validação de telefone.
-          return telefone.matches(phoneRegex);
-         }
-
-        // Método para validar o CPF (apenas uma verificação simples)
-            private static boolean isValidCPF(String cpf) {
-        // Aqui você pode implementar uma lógica mais complexa para validar o CPF.
-        return cpf.matches("\\d{11}"); // Valida se o CPF tem 11 dígitos.
-         }
-
-        public static void deleteCliente() {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Digite o ID do cliente a ser deletado: ");
-            int idCliente = scanner.nextInt();
-
-            // Verifica se o cliente existe no banco de dados.
-        if (verifyClientes(idCliente)) {
-            //SQL para deletar o telefone 
-            String sql = "DELETE FROM clientes WHERE idCliente = ?;";
-            //Obtem a conexao com o banco de dados
-            try (Connection conexao = ConexaoBanco.obterConexao();
-            //prepara a instrucao SQL
-                 PreparedStatement stmt = conexao.prepareStatement(sql)) {
-                    //define o id do cliente a ser deletado
-                stmt.setInt(1, idCliente);
-                int linhasAfetadas = stmt.executeUpdate();
-                //// Executa a instrução SQL e obtém o número de linhas afetadas.
+                //executa a atualizacao e obtem o numero de linhas afetadas
+                int linhasAfetadas = updateStmt.executeUpdate();
+                //verifica se a atualizacao foi bem sucedida
                 if (linhasAfetadas > 0) {
-                    System.out.println("Cliente deletado com sucesso.");
+                    System.out.println(linhasAfetadas + " cliente atualizado com sucesso.");
                 } else {
-                    System.out.println("Nenhum cliente foi deletado.");
+                    System.out.println("Nenhum cliente foi atualizado.");
                 }
-            } catch (SQLException ex) {
-                System.out.println("Erro ao deletar cliente: " + ex.getMessage());
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-    public static boolean verifyClientes(int idCliente) {
-         // SQL para contar o número de clientes com o ID fornecido.
-        String sql = "SELECT COUNT(*) FROM clientes WHERE idCliente = ?";
-         // Obtém a conexão com o banco de dados.
-        try (Connection conexao = ConexaoBanco.obterConexao();
-        // Prepara a instrução SQL.
-             PreparedStatement stmt = conexao.prepareStatement(sql)) {
-        // Define o ID do cliente a ser verificado
-            stmt.setInt(1, idCliente);
-            ResultSet rs = stmt.executeQuery();
-        // Executa a consulta e obtém o resultado.
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // Retorna verdadeiro se o cliente existir (contagem > 0).
             }
         } catch (SQLException ex) {
-            System.out.println("Erro ao verificar cliente: " + ex.getMessage());
+            // em caso de erro, captura a execao e imprime a mensagem de erro
+            System.out.println("Erro ao acessar o banco de dados: " + ex.getMessage());
         }
-        return false;  // Retorna falso se não for possível verificar o cliente.
+    } else {
+        //se o cliente nao for encontrado, imprime uma mensagem de erro, informando que a atualizacao nao foi bem sucedida.
+        System.out.println("Cliente não encontrado. Atualização não realizada.");
     }
 }
+// Metodo para validar o email
+private static boolean isValidEmail(String email) {
+    String emailRegex = "^[a-zA-Z0-9_+&-]+(?:\\.[a-zA-Z0-9_+&-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+    return email.matches(emailRegex);
+}
+
+// Metodo para validar o telefone
+private static boolean isValidPhone(String telefone) {
+    String phoneRegex = "^\\+?[0-9]{10,15}$"; // Exemplo simples para validação de telefone.
+    return telefone.matches(phoneRegex);
+}
+
+// Metodo para validar o CPF (apenas uma verificação simples)
+private static boolean isValidCPF(String cpf) {
+    // Aqui você pode implementar uma lógica mais complexa para validar o CPF.
+    return cpf.matches("\\d{11}"); // Valida se o CPF tem 11 dígitos.
+}
+
+public static void deleteCliente() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Digite o ID do cliente a ser deletado: ");
+    int idCliente = scanner.nextInt();
+
+    // Verifica se o cliente existe no banco de dados.
+    if (verifyClientes(idCliente)) {
+        //SQL para deletar o telefone 
+        String sql = "DELETE FROM clientes WHERE idCliente = ?;";
+        //Obtem a conexao com o banco de dados
+        try (Connection conexao = ConexaoBanco.obterConexao();
+             //prepara a instrucao SQL
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            //define o id do cliente a ser deletado
+            stmt.setInt(1, idCliente);
+            int linhasAfetadas = stmt.executeUpdate();
+            //// Executa a instrução SQL e obtém o número de linhas afetadas.
+            if (linhasAfetadas > 0) {
+                System.out.println("Cliente deletado com sucesso.");
+            } else {
+                System.out.println("Nenhum cliente foi deletado.");
+            }
+        } catch (SQLException ex) {
+            System.out.println("Erro ao deletar cliente: " + ex.getMessage());
+        }
+    } else {
+        System.out.println("Cliente não encontrado.");
+    }
+}
+public static boolean verifyClientes(int idCliente) {
+    // SQL para contar o número de clientes com o ID fornecido.
+    String sql = "SELECT COUNT(*) FROM clientes WHERE idCliente = ?";
+    // Obtém a conexão com o banco de dados.
+    try (Connection conexao = ConexaoBanco.obterConexao();
+         // Prepara a instrução SQL.
+         PreparedStatement stmt = conexao.prepareStatement(sql)) {
+        // Define o ID do cliente a ser verificado
+        stmt.setInt(1, idCliente);
+        ResultSet rs = stmt.executeQuery();
+        // Executa a consulta e obtém o resultado.
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Retorna verdadeiro se o cliente existir (contagem > 0).
+        }
+    } catch (SQLException ex) {
+        System.out.println("Erro ao verificar cliente: " + ex.getMessage());
+    }
+    return false;  // Retorna falso se não for possível verificar o cliente.
+    }
