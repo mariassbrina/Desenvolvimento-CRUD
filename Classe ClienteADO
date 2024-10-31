@@ -1,34 +1,96 @@
+package poo.ecommerce;
+
 import java.sql.*;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class ClienteADO {
-
-
+    
+    // Linhas 13 a 104 comentadas por: Sherlyene Vitória Mauriz de Oliveira.
+    
     public static void createCliente() {
         Scanner scanner = new Scanner(System.in);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        System.out.println("Insira o nome do Cliente: ");
-        String nome = scanner.nextLine();
+        String nome, email, telefone, cpf;
+        // Loop para garantir que o nome não esteja vazio ou em branco
+        while (true) {
+            System.out.print("Insira o nome do Cliente: ");
+            nome = scanner.nextLine();
+            // Verifica se o campo está vazio ou contém apenas espaços em branco
+            if (!nome.isBlank()) {
+                break; // Sai do loop se o nome for válido
+            } else {
+                System.out.println("Nome inválido.");
+            }
+        }
+        
+        // Loop para garantir que o email seja válido.
+        while (true){
+            System.out.print("Insira o e-mail do Cliente: ");
+            email = scanner.nextLine();
+          
+            // Verifica se o email está vazio ou contém apenas espaços em branco
+            if(!email.isBlank() && email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2})?$")){
+                break; // Sai do loop se o email for válido
+            }else {
+                System.out.println("Email inválido.");
+            }
+        }
+        
 
-        System.out.print("Insira o e-mail do Cliente: ");
-        String email = scanner.nextLine();
+        // Loop para garantir que o telefone não esteja vazio ou em branco
+        while (true){
+            System.out.print("Insira o telefone do Cliente: ");
+            telefone = scanner.nextLine();
+            
+            // Verifica se o email está vazio ou contém apenas espaços em branco
+            if(!telefone.isBlank() && telefone.matches("^\\(\\d{2}\\)\\d{9}$") || telefone.matches("^\\d{11}$")){
+                break; // Sai do loop se o telefone for válido
+            }else {
+                System.out.println("Telefone inválido.");
+            }
+        }
 
-        System.out.print("Insira o telefone do Cliente: ");
-        String telefone = scanner.nextLine();
+        // Loop para garantir que o cpf seja válido
+        while (true){
+            System.out.print("Insira o CPF do Cliente: ");
+            cpf = scanner.nextLine();
+            
+            // Verifica se o email é válido
+            if(!cpf.isBlank() && cpf.matches("^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$") || cpf.matches("^\\d{11}$")){
+                break; // Sai do loop se o cpf for válido
+            }else {
+                System.out.println("CPF inválido.");
+            }
+        }
 
-        System.out.print("Insira o CPF do Cliente: ");
-        String cpf = scanner.nextLine();
-
-        System.out.print("Insira a data de cadastro (dd/MM/yyyy): ");
-        String data_cadastroStr = scanner.nextLine();
-        LocalDate data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
-
+        // Validação do campo Data de Cadastro
+        LocalDate data_cadastro;
+        while (true) {
+            System.out.print("Insira a data de cadastro (dd/MM/yyyy): ");
+            String data_cadastroStr = scanner.nextLine();
+            try {
+                data_cadastro = LocalDate.parse(data_cadastroStr, formatter);
+                break; // Sai do loop se a data for válida
+            } catch (DateTimeParseException e) {
+                System.out.println("Data inválida. Por favor, insira no formato dd/MM/yyyy.");
+            }
+        }
+        
+        
+        // Código em SQL para ser executado
         String sql = "INSERT INTO clientes (nome, email, telefone, cpf, data_cadastro) VALUES (?, ?, ?, ?, ?)";
+        
+        // Tenta conectar com o banco de dados
         try (Connection conexao = ConexaoBanco.obterConexao();
-             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            
+            // Prepara a instrunção SQL para ser executada
+            PreparedStatement stmt = conexao.prepareStatement(sql)) {
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, telefone);
@@ -37,6 +99,8 @@ public class ClienteADO {
             stmt.executeUpdate();
             System.out.println("Cliente inserido com sucesso.");
         } catch (SQLException ex) {
+            
+            // Exibe mensagem de erro caso não consiga inserir cliente
             System.out.println("Erro ao inserir cliente: " + ex.getMessage());
         }
     }
